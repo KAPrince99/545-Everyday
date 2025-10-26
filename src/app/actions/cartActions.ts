@@ -5,7 +5,7 @@ import { ClothDataProps } from "@/contexts/CartContext";
 import { createClient } from "@/lib/server";
 import { revalidatePath } from "next/cache";
 
-interface CartDataProps {
+export interface CartDataProps {
   front_image: string;
   name: string;
   price: string;
@@ -92,6 +92,23 @@ export async function deleteCartItem(params: DeleteCartItemParams) {
     return { success: true };
   } catch (error) {
     console.error("Error deleting cart item:", error);
-    throw error; // Re-throw to be handled by react-query onError
+    throw error;
+  }
+}
+
+export interface itemToDeleteProps {
+  name: string;
+  size: string;
+  cloth_id: string;
+}
+
+export async function deleteSingleCartItem(id: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("cart").delete().eq("id", id);
+
+  if (error) {
+    console.error(error.message);
+    return;
   }
 }

@@ -11,7 +11,6 @@ import ProductInfo from "@/components/ui/productInfo";
 import { ProductImageDisplay } from "@/components/ui/productImageDisplay";
 import StyledWithCard from "@/components/ui/StyledWithCard";
 
-// ✅ params should be a Promise (Next.js 15+)
 interface ClothNameProps {
   params: Promise<{ clothName: string }>;
 }
@@ -29,7 +28,6 @@ export interface ClothDataProps {
   image_p3: string;
 }
 
-// ✅ Async data fetcher
 async function fetchClothData(
   decodedClothName: string
 ): Promise<ClothDataProps> {
@@ -45,13 +43,11 @@ async function fetchClothData(
 }
 
 export default function Page({ params }: ClothNameProps) {
-  // ✅ unwrap params (Next.js 15+ requirement)
   const { clothName } = use(params);
   const decodedClothName = decodeURIComponent(clothName);
   const [chosenSize, setChosenSize] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [sizeError, setSizeError] = useState<string | null>(null);
-  const { setIsSheetOpen } = useCart();
+  const { setIsSheetOpen, sizeError, setSizeError } = useCart();
   const queryClient = useQueryClient();
 
   const sizeOptions = ["XS", "S", "M", "L", "XL"];
@@ -61,7 +57,6 @@ export default function Page({ params }: ClothNameProps) {
     setSelectedIndex(i);
   }
 
-  // ✅ React Query fetch
   const { data, isLoading, error } = useQuery<ClothDataProps>({
     queryKey: ["clothData", decodedClothName],
     queryFn: () => fetchClothData(decodedClothName),
@@ -76,65 +71,61 @@ export default function Page({ params }: ClothNameProps) {
   const { mutateAsync: addToCartMutation, isPending: isAddingToCart } =
     useMutation({
       mutationFn: setCartData,
-      // onMutate receives the new item data *before* the API call
+
       onMutate: async (newCartItem: CartItemProps) => {
-        // 1. Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries({ queryKey: ["cart"] });
 
-        // 2. Snapshot the previous value
         const previousCart = queryClient.getQueryData<UniqueCartItemProps[]>([
           "cart",
         ]);
 
-        // 3. Optimistically update the cache to the new value
-        queryClient.setQueryData<UniqueCartItemProps[]>(["cart"], (old) => {
-          if (!old) return [newCartItem as UniqueCartItemProps];
+        queryClient.setQueryData<UniqueCartItemProps[]>(
+          ["cart"],
+          (old: any) => {
+            if (!old) return [newCartItem as UniqueCartItemProps];
 
-          // Check if item with same name/size/price exists
-          const existingItemIndex = old.findIndex(
-            (item) =>
-              item.name === newCartItem.name &&
-              item.size === newCartItem.size &&
-              item.price === newCartItem.price
-          );
+            // Check if item with same name/size/price exists
+            const existingItemIndex = old.findIndex(
+              (item) =>
+                item.name === newCartItem.name &&
+                item.size === newCartItem.size &&
+                item.price === newCartItem.price
+            );
 
-          if (existingItemIndex > -1) {
-            // If it exists, increment the count
-            const updatedCart = [...old];
-            updatedCart[existingItemIndex] = {
-              ...updatedCart[existingItemIndex],
-              count: (updatedCart[existingItemIndex].count || 1) + 1,
-            };
-            return updatedCart;
-          } else {
-            // Otherwise, add the new item with a count of 1
-            return [...old, { ...newCartItem, count: 1 }];
+            if (existingItemIndex > -1) {
+              const updatedCart = [...old];
+              updatedCart[existingItemIndex] = {
+                ...updatedCart[existingItemIndex],
+                count: (updatedCart[existingItemIndex].count || 1) + 1,
+              };
+              return updatedCart;
+            } else {
+              return [...old, { ...newCartItem, count: 1 }];
+            }
           }
-        });
+        );
 
         setSizeError(null);
-        setIsSheetOpen(true); // Open the cart sheet immediately
+        setIsSheetOpen(true);
 
-        // 4. Return a context object with the snapshot value
         return { previousCart };
       },
-      // If the mutation fails, use the context to roll back
+
       onError: (err, variables, context) => {
         console.error("Error adding to cart, rolling back:", err);
         if (context?.previousCart) {
           queryClient.setQueryData(["cart"], context.previousCart);
-          // Optional: Keep the sheet closed on error
+
           setIsSheetOpen(false);
           alert("Failed to add item to cart. Please try again.");
         }
       },
-      // Always refetch after error or success to ensure the client is in sync with the server
+
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["cart"] });
       },
     });
 
-  // ✅ Loading / Error states
   if (isLoading) return <Loader2 className="animate-spin" />;
   if (error) return <p className="text-red-500">Error Loading Cloth</p>;
   if (!data) return <p>No cloth data found.</p>;

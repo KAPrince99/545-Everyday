@@ -53,49 +53,5 @@ export default function OrderSummary({
       </CardFooter>
       <BorderBeam duration={8} size={100} />
     </Card>
-    //  <div className="space-y-6">
-    //    <h3 className="text-xl font-semibold">Total Order</h3>
-
-    //    <div className="space-y-4">
-    //      {cart?.map((item) => (
-    //        <div key={item.id} className="flex items-center gap-3">
-    //          <img
-    //            src={item.front_image ?? "/images/placeholder.png"}
-    //            alt={item.name}
-    //            className="w-14 h-14 object-cover rounded"
-    //          />
-    //          <div className="flex-1">
-    //            <div className="text-sm font-medium">{item.name}</div>
-    //            <div className="text-xs text-gray-500">
-    //              Qty: {item.count} • {item.size}
-    //            </div>
-    //          </div>
-    //          <div className="font-medium">
-    //            {centsToDisplay(Number(item.price) * item.count)}
-    //          </div>
-    //        </div>
-    //      ))}
-    //    </div>
-
-    //    <div className="border-t pt-4 text-sm space-y-2">
-    //      <div className="flex justify-between">
-    //        <span>Subtotal</span>
-    //        {/* <span>{centsToDisplay(subtotal)}</span> */}
-    //      </div>
-    //      <div className="flex justify-between">
-    //        <span>Shipping</span>
-    //        {/* <span>{centsToDisplay(shipping)}</span> */}
-    //      </div>
-    //      <div className="flex justify-between">
-    //        <span>Taxes</span>
-    //        {/* <span>{centsToDisplay(tax)}</span> */}
-    //      </div>
-
-    //      <div className="flex justify-between text-lg font-semibold pt-3">
-    //        <span>Totale</span>
-    //        {/* <span>{centsToDisplay(total)}</span> */}
-    //      </div>
-    //    </div>
-    //  </div>
   );
 }

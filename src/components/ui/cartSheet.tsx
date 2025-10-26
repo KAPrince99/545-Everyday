@@ -4,7 +4,10 @@ import {
   deleteCartItem,
   getCartData,
   UniqueCartItemProps,
-  DeleteCartItemParams, // Import the new type
+  DeleteCartItemParams,
+  CartDataProps,
+  setCartData,
+  deleteSingleCartItem,
 } from "@/app/actions/cartActions";
 import { Button } from "@/components/ui/button";
 
@@ -42,7 +45,8 @@ export interface CartItemProps {
 }
 
 export function CartSheet({ action, sizeError }: DataProps) {
-  const { isSheetOpen, setIsSheetOpen, setSumOfCartItems } = useCart();
+  const { isSheetOpen, setIsSheetOpen, setSumOfCartItems, setSizeError } =
+    useCart();
   const queryClient = useQueryClient();
 
   const { data: cartItems, isLoading: isCartLoading } = useQuery<
@@ -60,12 +64,11 @@ export function CartSheet({ action, sizeError }: DataProps) {
   }, [totalItemCount, setSumOfCartItems]);
   const deleteMutation = useMutation({
     mutationFn: deleteCartItem,
-    // The onMutate now receives the DeleteCartItemParams object
+
     onMutate: async (itemToDeleteParams: DeleteCartItemParams) => {
       await queryClient.cancelQueries({ queryKey: ["cart"] });
       const previousCart = queryClient.getQueryData(["cart"]);
 
-      // Optimistically update the UI by filtering out the item matching the unique parameters
       queryClient.setQueryData<UniqueCartItemProps[]>(["cart"], (old) =>
         old?.filter(
           (item) =>
@@ -81,15 +84,14 @@ export function CartSheet({ action, sizeError }: DataProps) {
       alert("Failed to delete item. Please try again.");
     },
     onSettled: () => {
-      // Re-fetch to ensure sync with the database
       queryClient.invalidateQueries({ queryKey: ["cart"] });
 
       const currentCartData = queryClient.getQueryData(["cart"]) as
         | UniqueCartItemProps[]
         | undefined;
-      // Close the sheet if the cart becomes empty after deletion
+
       if (!currentCartData || currentCartData.length === 0) {
-        setIsSheetOpen(false); // Use the state setter instead of DOM manipulation
+        setIsSheetOpen(false);
       }
     },
   });
@@ -100,7 +102,6 @@ export function CartSheet({ action, sizeError }: DataProps) {
     itemSize: string | null,
     itemColor: string
   ) {
-    // Pass the parameters as a single object to the mutate function
     deleteMutation.mutate({
       name: itemName,
       price: itemPrice,
@@ -109,10 +110,84 @@ export function CartSheet({ action, sizeError }: DataProps) {
     });
   }
 
+  const { mutateAsync: addToCartMutation } = useMutation({
+    mutationFn: setCartData,
+
+    onMutate: async (newCartItem: CartItemProps) => {
+      await queryClient.cancelQueries({ queryKey: ["cart"] });
+
+      const previousCart = queryClient.getQueryData<UniqueCartItemProps[]>([
+        "cart",
+      ]);
+
+      queryClient.setQueryData<UniqueCartItemProps[]>(["cart"], (old: any) => {
+        if (!old) return [newCartItem as UniqueCartItemProps];
+
+        const existingItemIndex = old.findIndex(
+          (item) =>
+            item.name === newCartItem.name &&
+            item.size === newCartItem.size &&
+            item.price === newCartItem.price
+        );
+
+        if (existingItemIndex > -1) {
+          const updatedCart = [...old];
+          updatedCart[existingItemIndex] = {
+            ...updatedCart[existingItemIndex],
+            count: (updatedCart[existingItemIndex].count || 1) + 1,
+          };
+          return updatedCart;
+        } else {
+          return [...old, { ...newCartItem, count: 1 }];
+        }
+      });
+
+      setSizeError(null);
+      setIsSheetOpen(true);
+
+      return { previousCart };
+    },
+
+    onError: (err, variables, context) => {
+      console.error("Error adding to cart, rolling back:", err);
+      if (context?.previousCart) {
+        queryClient.setQueryData(["cart"], context.previousCart);
+
+        setIsSheetOpen(false);
+        alert("Failed to add item to cart. Please try again.");
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  function handlePlus(cartData: CartDataProps) {
+    const newCartItem: CartItemProps = {
+      front_image: cartData.front_image,
+      name: cartData.name,
+      price: cartData.price,
+      size: cartData.size,
+      cloth_id: cartData.cloth_id,
+      color: cartData.color,
+    };
+    addToCartMutation(newCartItem);
+  }
+
+  const { mutate: removeSingle } = useMutation({
+    mutationFn: deleteSingleCartItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  function handleMinus(id: string) {
+    removeSingle(id);
+  }
+
   const cartIsEmpty = cartItems?.length === 0;
 
-  // --- FIX APPLIED HERE ---
-  // Calculate total based on item price * count
   const cartTotal =
     cartItems?.reduce(
       (sum, item) => sum + parseFloat(item.price) * (item.count || 1),
@@ -183,6 +258,7 @@ export function CartSheet({ action, sizeError }: DataProps) {
                       <Button
                         className="rounded-none cursor-pointer"
                         variant="outline"
+                        onClick={() => handleMinus(item.id)}
                       >
                         -
                       </Button>
@@ -195,13 +271,12 @@ export function CartSheet({ action, sizeError }: DataProps) {
                       <Button
                         className="rounded-none cursor-pointer"
                         variant="outline"
+                        onClick={() => handlePlus(item)}
                       >
                         +
                       </Button>
                     </div>
 
-                    {/* --- FIX APPLIED HERE --- */}
-                    {/* Display the total price for this line item */}
                     <p className="text-sm font-semibol">
                       ${(parseFloat(item.price) * (item.count || 1)).toFixed(2)}
                     </p>
