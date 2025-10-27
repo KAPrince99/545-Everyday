@@ -124,7 +124,7 @@ export function CartSheet({ action, sizeError }: DataProps) {
         if (!old) return [newCartItem as UniqueCartItemProps];
 
         const existingItemIndex = old.findIndex(
-          (item) =>
+          (item: any) =>
             item.name === newCartItem.name &&
             item.size === newCartItem.size &&
             item.price === newCartItem.price

@@ -111,4 +111,5 @@ export async function deleteSingleCartItem(id: string) {
     console.error(error.message);
     return;
   }
+  return { sucess: true };
 }

@@ -14,6 +14,7 @@ interface ProductInfoProps {
   chosenSize?: string | null;
   isAddingToCart: boolean;
   selectedIndex?: number | null;
+
   handleSelectSize: (selectedSize: string, i: number) => void;
   handleAddToCart: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
@@ -25,6 +26,7 @@ export default function ProductInfo({
   chosenSize,
   isAddingToCart,
   selectedIndex,
+
   handleSelectSize,
   handleAddToCart,
 }: ProductInfoProps) {
