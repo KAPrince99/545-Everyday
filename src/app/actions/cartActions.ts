@@ -2,7 +2,7 @@
 
 import { CartItemProps } from "@/components/ui/cartSheet";
 import { ClothDataProps } from "@/contexts/CartContext";
-import { createClient } from "@/lib/server";
+import { createSupabaseClient } from "@/lib/server";
 import { revalidatePath } from "next/cache";
 
 export interface CartDataProps {
@@ -20,7 +20,7 @@ export interface UniqueCartItemProps extends CartItemProps {
 }
 
 export async function getClothData(): Promise<ClothDataProps[] | undefined> {
-  const supabase = await createClient();
+  const supabase = createSupabaseClient();
   try {
     const { data, error } = await supabase.from("clothes").select("*");
     if (error) throw new Error(error.message);
@@ -32,7 +32,7 @@ export async function getClothData(): Promise<ClothDataProps[] | undefined> {
 }
 
 export async function setCartData(cartData: CartDataProps) {
-  const supabase = await createClient();
+  const supabase = createSupabaseClient();
   try {
     const { error: insertError } = await supabase
       .from("cart")
@@ -48,7 +48,7 @@ export async function setCartData(cartData: CartDataProps) {
 }
 
 export async function getCartData() {
-  const supabase = await createClient();
+  const supabase = createSupabaseClient();
   try {
     const { data, error } = await supabase.from("cart").select("*");
     if (error) throw new Error(error.message);
@@ -78,7 +78,7 @@ export interface DeleteCartItemParams {
 }
 
 export async function deleteCartItem(params: DeleteCartItemParams) {
-  const supabase = await createClient();
+  const supabase = createSupabaseClient();
   try {
     const { error } = await supabase
       .from("cart")
@@ -103,7 +103,7 @@ export interface itemToDeleteProps {
 }
 
 export async function deleteSingleCartItem(id: string) {
-  const supabase = await createClient();
+  const supabase = createSupabaseClient();
 
   const { error } = await supabase.from("cart").delete().eq("id", id);
 

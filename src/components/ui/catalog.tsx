@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/server";
 import React from "react";
 import ShowCard from "./showCard";
+import { createSupabaseClient } from "@/lib/server";
 
 export default async function Catalog() {
-  const supabase = await createClient();
+  const supabase = await createSupabaseClient();
   const title = "OUTWEAR";
   const { data: clothes, error: errorClothes } = await supabase
     .from("clothes")

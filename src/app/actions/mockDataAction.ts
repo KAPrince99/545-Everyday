@@ -1,13 +1,13 @@
 "use server";
 
-import { createClient } from "@/lib/server";
+import { createSupabaseClient } from "@/lib/server";
 import { mockData } from "@/mockData/mockData";
 
 import fs from "fs";
 import path from "path";
 
 export async function setClothData() {
-  const supabase = await createClient();
+  const supabase = createSupabaseClient();
 
   for (const data of mockData) {
     // Read image files from public directory
