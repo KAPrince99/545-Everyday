@@ -1,6 +1,5 @@
 "use client";
 
-import { CartItemProps } from "@/components/ui/cartSheet";
 import { supabase } from "@/lib/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -10,19 +9,7 @@ import { useCart } from "@/contexts/CartContext";
 import ProductInfo from "@/components/ui/productInfo";
 import { ProductImageDisplay } from "@/components/ui/productImageDisplay";
 import StyledWithCard from "@/components/ui/StyledWithCard";
-
-export interface ClothDataProps {
-  id: string;
-  name: string;
-  color: string;
-  price: string;
-  details: string[];
-  delivery: string;
-  front_image: string;
-  image_p1: string;
-  image_p2: string;
-  image_p3: string;
-}
+import { CartItemProps, ClothDataProps } from "@/types/types";
 
 async function fetchClothData(
   decodedClothName: string

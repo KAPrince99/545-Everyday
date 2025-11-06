@@ -1,18 +1,8 @@
 "use server";
 
-import { CartItemProps } from "@/components/ui/cartSheet";
-import { ClothDataProps } from "@/contexts/CartContext";
 import { createSupabaseClient } from "@/lib/server";
+import { CartDataProps, CartItemProps, ClothDataProps } from "@/types/types";
 import { revalidatePath } from "next/cache";
-
-export interface CartDataProps {
-  front_image: string;
-  name: string;
-  price: string;
-  size: string | null;
-  cloth_id: string;
-  color: string;
-}
 
 export interface UniqueCartItemProps extends CartItemProps {
   id: string;

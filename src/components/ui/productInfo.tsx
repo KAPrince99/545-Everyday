@@ -4,8 +4,8 @@ import { CartSheet } from "./cartSheet";
 import { Button } from "./button";
 import { Loader2 } from "lucide-react";
 import { AccordionInfo } from "./accordionInfo";
-import { ClothDataProps } from "@/app/[clothName]/page";
 import { BorderBeam } from "./border-beam";
+import { ClothDataProps } from "@/contexts/CartContext";
 
 interface ProductInfoProps {
   data: ClothDataProps;

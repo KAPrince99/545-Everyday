@@ -4,7 +4,7 @@ import TextLayer from "@/components/ui/textLayer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "545 | Catalog",
+  title: "Tiny45 | Catalog",
 };
 
 export default function Home() {

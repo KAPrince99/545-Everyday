@@ -14,8 +14,8 @@ export const roboto = Roboto_Slab({
 
 export const metadata: Metadata = {
   title: {
-    default: "545 ",
-    template: "545 | %s",
+    default: "Tiny45 ",
+    template: "Tiny45 | %s",
   },
 };
 

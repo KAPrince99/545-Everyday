@@ -1,11 +1,10 @@
 "use client";
-import { ClothDataProps } from "@/app/[clothName]/page";
+
 import {
   deleteCartItem,
   getCartData,
   UniqueCartItemProps,
   DeleteCartItemParams,
-  CartDataProps,
   setCartData,
   deleteSingleCartItem,
 } from "@/app/actions/cartActions";
@@ -21,6 +20,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
+import { CartDataProps, CartItemProps, ClothDataProps } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -32,16 +32,6 @@ interface DataProps {
   data?: ClothDataProps;
   chosenSize?: string | null;
   sizeError?: string | null;
-}
-
-export interface CartItemProps {
-  id?: string | number;
-  front_image: string;
-  name: string;
-  price: string;
-  size: string | null;
-  cloth_id: string;
-  color: string;
 }
 
 export function CartSheet({ action, sizeError }: DataProps) {
