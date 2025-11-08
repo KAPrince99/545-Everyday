@@ -2,7 +2,6 @@
 
 import { supabase } from "@/lib/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { setCartData, UniqueCartItemProps } from "../actions/cartActions";
 import { useCart } from "@/contexts/CartContext";
@@ -10,6 +9,7 @@ import ProductInfo from "@/components/ui/productInfo";
 import { ProductImageDisplay } from "@/components/ui/productImageDisplay";
 import StyledWithCard from "@/components/ui/StyledWithCard";
 import { CartItemProps, ClothDataProps } from "@/types/types";
+import ClothNameSkeleton from "@/components/ui/clothNameSkeleton";
 
 async function fetchClothData(
   decodedClothName: string
@@ -108,7 +108,7 @@ export default function ClothName({ clothName }: { clothName: string }) {
       },
     });
 
-  if (isLoading) return <Loader2 className="animate-spin" />;
+  if (isLoading) return <ClothNameSkeleton />;
   if (error) return <p className="text-red-500">Error Loading Cloth</p>;
   if (!data) return <p>No cloth data found.</p>;
 

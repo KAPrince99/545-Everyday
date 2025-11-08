@@ -1,7 +1,7 @@
-import { ClothDataProps } from "@/contexts/CartContext";
 import Link from "next/link";
 import React from "react";
 import ClothCard from "./clothCard";
+import { ClothDataProps } from "@/types/types";
 
 interface ShowCardProps {
   title: string;

@@ -8,8 +8,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ClothDataProps } from "@/app/[clothName]/page";
+
 import Image from "next/image";
+import { ClothDataProps } from "@/types/types";
 
 export function ProductImageDisplay({ data }: { data: ClothDataProps }) {
   const { front_image, image_p1, image_p2, image_p3, name } = data;

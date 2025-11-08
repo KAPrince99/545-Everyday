@@ -1,4 +1,4 @@
-import { ClothDataProps } from "@/app/[clothName]/page";
+import { ClothDataProps } from "@/types/types";
 import Image from "next/image";
 import React from "react";
 
@@ -8,7 +8,7 @@ interface ClothCardProps {
 
 export default function ClothCard({ data }: ClothCardProps) {
   return (
-    <div className="flex justify-center ">
+    <div className="flex  justify-center ">
       <button
         type="button"
         className="group flex w-full cursor-pointer flex-col items-stretch rounded-xl bg-white 
@@ -30,7 +30,7 @@ export default function ClothCard({ data }: ClothCardProps) {
         </div>
 
         <div className="flex flex-col justify-center flex-shrink-0 items-start p-4 bg-white group-hover:bg-white transition-colors duration-300 ">
-          <div className="text-[12px] font-semibold text-gray-800 truncate group-hover:underline ">
+          <div className="text-[12px] font-semibold truncate text-gray-800 group-hover:underline">
             {data.name
               .replace(/-/g, " ")
               .slice(0, data.name.replace(/-/g, " ").lastIndexOf(" "))}
