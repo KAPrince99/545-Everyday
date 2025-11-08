@@ -26,6 +26,7 @@ import { Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode, useEffect } from "react";
+import EmptyCart from "./emptyCart";
 
 interface DataProps {
   action: ReactNode;
@@ -193,17 +194,17 @@ export function CartSheet({ action, sizeError }: DataProps) {
       >
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
-          <SheetDescription>
-            Review your selected items before proceeding to checkout.
-          </SheetDescription>
+          {cartItems?.length === 0 && <EmptyCart />}
+          {cartItems && cartItems.length > 0 && (
+            <SheetDescription>
+              Review your selected items before proceeding to checkout.
+            </SheetDescription>
+          )}
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4 py-4">
-          {isCartLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <Loader2 className="animate-spin size-8" />
-            </div>
-          ) : cartItems && cartItems.length > 0 ? (
+          {cartItems &&
+            cartItems.length > 0 &&
             cartItems.map((item, index) => (
               <div
                 key={item.id || index}
@@ -273,40 +274,37 @@ export function CartSheet({ action, sizeError }: DataProps) {
                   </div>
                 </section>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 mt-8">
-              Your cart is empty.
-            </p>
-          )}
+            ))}
         </div>
 
-        <SheetFooter className="mt-auto">
-          <div className="flex justify-between items-center w-full mb-4">
-            <p className="text-lg font-bold">Total:</p>
-            <p className="text-lg font-bold ">${cartTotal.toFixed(2)}</p>
-          </div>
-          <Link href={cartIsEmpty ? "#" : "/checkOut"}>
-            {" "}
-            <Button
-              onClick={() => {
-                if (cartIsEmpty) return;
-                setIsSheetOpen(false);
-              }}
-              disabled={cartIsEmpty}
-              type="submit"
-              className="w-full cursor-pointer "
-            >
-              Checkout
-            </Button>
-          </Link>
+        {cartItems && cartItems.length > 0 && (
+          <SheetFooter className="mt-auto">
+            <div className="flex justify-between items-center w-full mb-4">
+              <p className="text-lg font-bold">Total:</p>
+              <p className="text-lg font-bold ">${cartTotal.toFixed(2)}</p>
+            </div>
+            <Link href={cartIsEmpty ? "#" : "/checkOut"}>
+              {" "}
+              <Button
+                onClick={() => {
+                  if (cartIsEmpty) return;
+                  setIsSheetOpen(false);
+                }}
+                disabled={cartIsEmpty}
+                type="submit"
+                className="w-full cursor-pointer "
+              >
+                Checkout
+              </Button>
+            </Link>
 
-          <SheetClose asChild>
-            <Button variant="outline" className="w-full">
-              Close
-            </Button>
-          </SheetClose>
-        </SheetFooter>
+            <SheetClose asChild>
+              <Button variant="outline" className="w-full">
+                Close
+              </Button>
+            </SheetClose>
+          </SheetFooter>
+        )}
       </SheetContent>
       {sizeError && <p className="text-red-500 mt-2 text-sm">{sizeError}</p>}
     </Sheet>
