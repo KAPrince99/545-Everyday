@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // @ts-expect-error  The Stripe TypeScript types only reflect the latest API version (2025-10-29.clover), but the current account is on an older API version (2024-11-13)
