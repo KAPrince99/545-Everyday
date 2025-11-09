@@ -103,3 +103,14 @@ export async function deleteSingleCartItem(id: string) {
   }
   return { sucess: true };
 }
+
+export async function getCartTotal() {
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase.from("cart").select("*");
+  if (error || !data) throw new Error(error ? error.message : `Cart is Empty`);
+  const cartTotal = data
+    .reduce((acc, item) => acc + Number(item.price || 0), 0)
+    .toFixed(2);
+  return cartTotal;
+}

@@ -1,30 +1,33 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { getCartData, UniqueCartItemProps } from "../actions/cartActions";
-import CheckOutForm from "@/components/checkout/checkOutForm";
-import OrderSummary from "@/components/checkout/orderSummary";
 
-export default function CheckOut() {
-  const { data: checkOutItems } = useQuery<UniqueCartItemProps[]>({
-    queryKey: ["cart"],
-    queryFn: getCartData,
-    staleTime: 0,
-  });
+import CheckOutForm from "@/components/checkout/checkOutForm";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import convertToSubCurrency from "../../../utils/convertToSubCurrency";
+
+if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined)
+  throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+
+export default function CheckOut({ cartTotal }: { cartTotal: number }) {
   return (
-    <div className="min-h-screen bg-white mt-10">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="min-h-screen bg-white mt-20">
+      <div className="max-w-3xl mx-auto px-4">
+        <div className="grid grid-cols-1 gap-8">
           {/* CHECKOUT FORM */}
           <section className="lg:col-span-1">
             <div className="bg-white ">
-              <CheckOutForm />
-            </div>
-          </section>
-          {/* ORDER SUMMARY */}
-          <section>
-            <div className="bg-white">
-              <OrderSummary cart={checkOutItems} />
+              <Elements
+                stripe={stripePromise}
+                options={{
+                  mode: "payment",
+                  amount: convertToSubCurrency(cartTotal),
+                  currency: "usd",
+                }}
+              >
+                <CheckOutForm cartTotal={cartTotal} />
+              </Elements>
             </div>
           </section>
         </div>
