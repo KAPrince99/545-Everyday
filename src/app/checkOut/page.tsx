@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import CheckOut from "./checkOut";
 import { getCartTotal } from "../actions/cartActions";
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: " Checkout",
 };
