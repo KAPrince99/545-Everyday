@@ -48,12 +48,13 @@ export default function CheckOutForm({ cartTotal }: { cartTotal: number }) {
       setLoading(false);
       return;
     }
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
     const { error } = await stripe.confirmPayment({
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://www.localhost:3001/payment-success?amount=${cartTotal}`,
+        return_url: `${baseUrl}/payment-success?amount=${cartTotal}`,
       },
     });
 
