@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const cartTotal = await getCartTotal();
-  console.log("CART TOTAL:", cartTotal);
   return (
     <main>
       <CheckOut cartTotal={cartTotal} />

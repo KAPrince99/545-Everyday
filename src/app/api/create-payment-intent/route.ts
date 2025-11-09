@@ -7,8 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function POST(request: NextRequest) {
   try {
     const { amount } = await request.json();
-    console.log("Received amount:", amount);
-    console.log("Stripe key exists:", !!process.env.STRIPE_SECRET_KEY);
+
     if (!amount) {
       return NextResponse.json(
         { error: "Missing required param: amount" },

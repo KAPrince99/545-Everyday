@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
 import { BorderBeam } from "../ui/border-beam";
-import { Separator } from "../ui/separator";
-import CreditCardComponent from "../ui/creditCard";
+
 import {
   PaymentElement,
   useElements,
@@ -92,6 +89,7 @@ export default function CheckOutForm({ cartTotal }: { cartTotal: number }) {
         ) : (
           <form onSubmit={handleSubmit} className="bg-white  rounded-md ">
             {clientSecret && <PaymentElement />}
+            {errorMessage && <div>{errorMessage}</div>}
             <Button
               disabled={!stripe || loading}
               className=" w-full p-5 mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse cursor-pointer"

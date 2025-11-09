@@ -15,7 +15,6 @@ export default function CheckOut({ cartTotal }: { cartTotal: number }) {
     <div className="min-h-screen bg-white mt-20">
       <div className="max-w-3xl mx-auto px-4">
         <div className="grid grid-cols-1 gap-8">
-          {/* CHECKOUT FORM */}
           <section className="lg:col-span-1">
             <div className="bg-white ">
               <Elements

@@ -139,7 +139,6 @@ export default function ClothName({ clothName }: { clothName: string }) {
     <div className="min-h-screen bg-white py-10">
       <div className="mx-auto px-2 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3  gap-1 lg:gap-12">
-          {/* 🖼️ Product Images */}
           <section className=" w-full lg:col-span-2 ">
             <ProductImageDisplay data={data} />
           </section>
